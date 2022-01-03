@@ -16,7 +16,7 @@ from .models import Coin
 MAX_BALANCE = 100.0
 
 def getClientOrderId():
-    return "+%s" % str(time.time())
+    return "_T%d" % int(time.time()*10000000)
 
 class BinanceAPIManager:
     def __init__(self, config: Config, db: Database, logger: Logger):
