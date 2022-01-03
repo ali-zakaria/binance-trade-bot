@@ -13,6 +13,8 @@ from .database import Database
 from .logger import Logger
 from .models import Coin
 
+def getClientOrderId():
+    return "+%s" % str(time.time())
 
 class BinanceAPIManager:
     def __init__(self, config: Config, db: Database, logger: Logger):
@@ -183,7 +185,9 @@ class BinanceAPIManager:
                         partially_order = None
                         while partially_order is None:
                             partially_order = self.binance_client.order_market_sell(
-                                symbol=origin_symbol + target_symbol, quantity=order_quantity
+                                symbol=origin_symbol + target_symbol,
+                                quantity=order_quantity,
+                                newClientOrderId=getClientOrderId(),
                             )
 
                     self.logger.info("Going back to scouting mode...")
@@ -272,6 +276,7 @@ class BinanceAPIManager:
                     symbol=origin_symbol + target_symbol,
                     quantity=order_quantity,
                     price=from_coin_price,
+                    newClientOrderId=getClientOrderId(),
                 )
                 self.logger.info(order)
             except BinanceAPIException as e:
@@ -327,7 +332,10 @@ class BinanceAPIManager:
         while order is None:
             # Should sell at calculated price to avoid lost coin
             order = self.binance_client.order_limit_sell(
-                symbol=origin_symbol + target_symbol, quantity=order_quantity, price=from_coin_price
+                symbol=origin_symbol + target_symbol,
+                quantity=order_quantity,
+                price=from_coin_price,
+                newClientOrderId=getClientOrderId(),
             )
 
         self.logger.info("order")
