@@ -13,6 +13,8 @@ from .database import Database
 from .logger import Logger
 from .models import Coin
 
+MAX_BALANCE = 100.0
+
 def getClientOrderId():
     return "+%s" % str(time.time())
 
@@ -102,6 +104,10 @@ class BinanceAPIManager:
         """
         Get balance of a specific coin
         """
+
+        if currency_symbol == "USDT" or currency_symbol == "BUSD":
+            return MAX_BALANCE
+
         with self.cache.open_balances() as cache_balances:
             balance = cache_balances.get(currency_symbol, None)
             if force or balance is None:
